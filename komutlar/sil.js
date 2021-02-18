@@ -1,38 +1,21 @@
 const Discord = require('discord.js');
-const db = require('quick.db')
+const data = require('quick.db');
 
 
-exports.run = async(client, message, args) => {
-  
-  
-  const sayi = args[0]
-  if (sayi > 100) return message.reply("En Az `1 - 100` Arasında Bir Tam Sayı Değeri Girmelisiniz.")
-
-  let messages = await message.channel.fetchMessages({
-    limit: 100
-  });
-
-     let mesaj = await message.channel.bulkDelete(messages, true);
-  
-  if (!mesaj.size) {
-    return message.reply("En Az `1 - 100` Arasında Bir Tam Sayı Değeri Girmelisiniz.")
-  }
-
-
-    message.reply(`${mesaj.size} Adet Mesaj Başarı İle Uzaya Fırlatıldı. :rocket:`)
-  
+exports.run = async (client, message, args) => {
+if(!message.member.permissions.has('MANAGE_MESSAGES')) return message.channel.send(new Discord.MessageEmbed().setTitle('**`Mesajları Yönet` İzni sende yok.**'));
+if(!args[0]) return message.channel.send(new Discord.MessageEmbed().setTitle('Silinecek miktar giriniz.'));
+if(args[0] > 100) return message.channel.send(new Discord.MessageEmbed().setTitle('Mesaj silme limiti `100` üzeri mesajı aynı anda silemem.'));
+message.channel.bulkDelete(args[0]);
+return message.channel.send(new Discord.MessageEmbed().setTitle('İşte bu kadar! '+`${args[0]}`+' adet mesaj silindi.')).then(m => m.delete({timeout: 5000}));
 };
-
 exports.conf = {
   enabled: true,
-  guildOnly: false,
-  aliases: ["sil"],
-  permLevel: 2
-};
+  guildOnly: true,
+  aliases: [],
+  permLevel: 0
+}
 
 exports.help = {
-  name: 'temizle',
-  description: 'Ban limiti.',
-  usage: 'banlimit',
-  kategori: 'yetkili'
+  name: 'sil'
 };
